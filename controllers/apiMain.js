@@ -1,13 +1,24 @@
 var Membri = require('../models/membroModel');
 var bodyParser = require('body-parser');
+var fs=require('fs');
+var indexHTML='./index.html';
 
 module.exports = function(app) {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.get('/api/based/:dbname', function(req, res) {
-    res.send('api base');
-    Membri.find({ username: req.params.dbname }, function(err, membri) {
 
+  app.get('/',(req,res)=>{
+      fs.readFile(indexHTML,(err,result)=>{
+          if (err){
+            throw err;
+          }
+          res.writeHeader(200,{'Content-Type':'text/html'});
+          res.write(result);
+          res.end();
+      })
+  });
+  app.get('/api/based/:dbname', function(req, res) {
+    Membri.find({ username: req.params.dbname }, function(err, membri) {
       if (err) throw err;
       res.send(membri);
     });
